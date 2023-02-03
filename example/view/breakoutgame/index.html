@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Jaihoe Tutorial</title>
+	<script type="application/javascript" src="../../../assets/js/jaihoe.js"></script>
+	<style type="text/css">
+	  .gameHolderAx{
+		position: absolute;
+		border: 2px solid black;
+	  }
+	  .gameMenuAx{
+	    display: none;
+		width: 480px;
+		height: 324px;
+		align-items: center;
+		
+		flex-wrap: wrap;
+		flex-direction: column;
+		
+		justify-content: center;
+	  }
+	  
+	  .gameMenuAx p{
+		font-family: Arial;
+		font-size: 23px;
+		color: #0095DD;
+		margin: 0 0 5px 0;
+	  }
+	  
+	  .gameMenuAx button{
+		font-family: Arial;
+		font-size: 16px;
+		background-color: #0095DD;
+		color: #FFFFFF;
+		border-radius: 8px;
+		padding: 8px;
+		border: 0;
+		cursor: pointer;
+	  }
+	  
+	  .gameMenuAx button:hover{
+		background-color: #0089CB;
+	  }
+	  
+	  .gameMenuAx button:active:hover{
+		background-color: #036FA2;
+	  }
+	  
+	  
+	</style>
+</head>
+
+<body>
+  <div class="gameHolderAx">
+    <canvas id="myGameCanvas" width="480" height="320"></canvas>
+     <div class="gameMenuAx" id="gameoverVx">
+		<p>Game Over!</p>
+		<button id="playagainGAx" type="button">Play again</button>
+     </div>
+     <div class="gameMenuAx" id="youwinVx">
+		<p>Congrats, you win!</p>
+		<button id="playagainWAx" type="button">Play again</button>
+     </div>
+  </div>
+  <jh-script>
+
+	<!-- 
+	     BREAKOUT GAME
+		 By raymondjplante
+		 
+		 (ReWritten in JaihoeScript)
+		  by Jerwin D. Dela Cruz
+	 -->
+		
+		<j-var data="canvas" data-eq data-var><j-docget data-id="'myGameCanvas'" data-docget></j-docget></j-var>
+		<j-var data="ctx" data-eq data-var><j-value data="canvas" data-value /><j-inhblk data="getContext" param="'2d'" data-parame data-inhblk /></j-var>
+		<j-var data="lossCondition" data-eq="false" data-var></j-var>
+		
+		<j-var data="ballRadius" data-eq="10" data-var></j-var>
+		<j-var data="x" data-eq="canvas" data-inherit="width/2" data-var></j-var>
+		<j-var data="y" data-eq="canvas" data-inherit="height-30" data-var></j-var>
+		<j-var data="dx" data-eq="2" data-var></j-var>
+		<j-var data="dy" data-eq="-2" data-var></j-var>
+		<j-var data="paddleHeight" data-eq="10" data-var></j-var>
+		<j-var data="paddleWidth" data-eq="75" data-var></j-var>
+		<j-var data="paddleX" data-eq data-var><j-paramblk data="canvas" data-inherit="width" data-minus="paddleWidth" data-paramblk /><j-value-divide/><j-value data="2" data-value /></j-var>
+		<j-var data="rightPressed" data-eq data-var><j-value-false/></j-var>
+		<j-var data="leftPressed" data-eq="false" data-var></j-var>
+		<j-var data="leftPressed" data-eq="false" data-var></j-var>
+		<j-var data="brickRowCount" data-eq="5" data-var></j-var>
+		<j-var data="brickColumnCount" data-eq="3" data-var></j-var>
+		<j-var data="brickWidth" data-eq="75" data-var></j-var>
+		<j-var data="brickHeight" data-eq="20" data-var></j-var>
+		<j-var data="brickPadding" data-eq="10" data-var></j-var>
+		<j-var data="brickOffsetTop" data-eq="30" data-var></j-var>
+		<j-var data="brickOffsetLeft" data-eq="30" data-var></j-var>
+		<j-var data="score" data-eq="0" data-var></j-var>
+		<j-var data="lives" data-eq="3" data-var></j-var>
+		
+		<j-var data="bricks" data-litarr data-var></j-var>
+		<j-for start="var c = 0" scope="c < brickColumnCount" action="c++" data-for>
+		   <j-set data="bricks" data-aks="c" data-akc data-litarr data-set></j-set>
+			<j-for start="var r = 0" scope="r < brickRowCount" action="r++" data-for>
+				<j-value data="bricks" data-aks="c" data-akc data-value /><j-darrblk data="r" data-darrblk /><j-eq/><j-object>
+					<j-attr name="x" value="0" data-attr></j-attr>
+					<j-attr name="y" value="0" data-attr></j-attr>
+					<j-attr name="status" value="1" data-attr="close"></j-attr>
+				</j-object><j-blkclose/>
+			</j-for>
+		</j-for>
+		
+		<j-add-evt var="document" data-evtype="keydown" data-add-evt><j-fx-evt name="keyDownHandler" data-fx-evt></j-fx-evt><j-and/><j-value-false/></j-add-evt>
+		<j-add-evt var="document" data-evtype="keyup" data-add-evt><j-fx-evt name="keyUpHandler" data-fx-evt></j-fx-evt><j-and/><j-value-false/></j-add-evt>
+		<j-add-evt var="document" data-evtype="mousemove" data-add-evt><j-fx-evt name="mouseMoveHandler" data-fx-evt></j-fx-evt><j-and/><j-value-false/></j-add-evt>
+		
+		<j-add-evt element="#playagainGAx" data-elem-evtype="click" data-add-evt><j-fx-evt name="reloadDocumentAx" data-fx-evt></j-fx-evt></j-add-evt>
+		<j-add-evt element="#playagainWAx" data-elem-evtype="click" data-add-evt><j-fx-evt name="reloadDocumentAx" data-fx-evt></j-fx-evt></j-add-evt>
+		
+		<j-fx name="reloadDocumentAx" param data-fx>
+			<j-value data="document" data-inherit data-value /><j-reload></j-reload>
+		</j-fx>
+		
+		<j-fx name="keyDownHandler" param="e" data-fx>
+			<j-if-block><j-value data="e" data-inherit="key" data-eqd="'Right'" data-value /><j-lgo/><j-value data="e" data-inherit="key" data-eqd="'ArrowRight'" data-value /><j-if-state/>
+			  <j-set data="rightPressed" data-eq="true" data-set></j-set>
+			</j-if-block>
+			<j-else-if-block><j-value data="e" data-inherit="key" data-eqd="'Left'" data-value /><j-lgo/><j-value data="e" data-inherit="key" data-eqd="'ArrowLeft'" data-value /><j-else-if-state/>
+			  <j-set data="leftPressed" data-eq="true" data-set></j-set>
+			</j-else-if-block>
+		</j-fx>
+		
+		<j-fx name="keyUpHandler" param="e" data-fx>
+			<j-if-block><j-value data="e" data-inherit="key" data-eqd="'Right'" data-value /><j-lgo/><j-value data="e" data-inherit="key" data-eqd="'ArrowRight'" data-value /><j-if-state/>
+			  <j-set data="rightPressed" data-eq="false" data-set></j-set>
+			</j-if-block>
+			<j-else-if-block><j-value data="e" data-inherit="key" data-eqd="'Left'" data-value /><j-lgo/><j-value data="e" data-inherit="key" data-eqd="'ArrowLeft'" data-value /><j-else-if-state/>
+			  <j-set data="leftPressed" data-eq="false" data-set></j-set>
+			</j-else-if-block>
+		</j-fx>
+		
+		<j-fx name="mouseMoveHandler" param="e" data-fx>
+			<j-var data="relativeX" data-eq data-var><j-value data="e" data-value /><j-inhblk data="clientX" data-inhblk /><j-value-minus/><j-value data="canvas" data-value /><j-inhblk data="offsetLeft" data-inhblk /></j-var>
+			<j-if-block><j-value data="relativeX" data-gt="0" data-value /><j-lga/><j-value data="relativeX" data-lt="canvas" data-inherit="width" data-value /><j-if-state/>
+			  <j-set data="paddleX" data-eq data-set><j-value data="relativeX" data-value /><j-value-minus/><j-value data="paddleWidth" data-divide="2" data-value /></j-set>
+			</j-if-block>
+		</j-fx>
+		
+		<j-fx name="collisionDetection" param data-fx>
+		  <j-for start="var c = 0" scope="c < brickColumnCount" action="c++" data-for>
+			<j-for start="var r = 0" scope="r < brickRowCount" action="r++" data-for>
+			  <j-let data="b" data-eq="bricks" data-aks="c" data-akc data-let><j-darrblk data="r" data-darrblk /></j-let>
+			  <j-if data="b" data-inherit="status" data-eqd="1" data-if>
+			    <j-if-block><j-value data="x" data-gt="b" data-inherit="x" data-value /><j-lga/><j-value data="x" data-lt="b" data-inherit="x" 
+				  data-add="brickWidth" data-value /><j-lga/><j-value data="y" data-value /><j-gt/><j-value data="b" data-inherit="y" 
+				  data-value /><j-lga/><j-value data="y" data-value /><j-lt/><j-value data="b" data-inherit="y" data-add="brickHeight" data-value /><j-if-state/>
+				  <j-set data="dy" data-eq="-dy" data-set></j-set>
+				  <j-set data="b" data-inherit="status" data-eq="0" data-set></j-set>
+				  <j-set data="score" data-inc data-set></j-set>
+				    <j-if data="score" data-eqd="brickRowCount" data-multiply="brickColumnCount" data-if>
+					  <j-if data data-not="lossCondition" data-if>
+					     <j-docget data-id="'youwinVx'" data-prop="style.display" data-eq="'flex'" data-docget-apply></j-docget>
+						<j-fx-call name="stopRemCanvasAx" param data-fx-call></j-fx-call>
+					  </j-if>
+				    </j-if>
+				</j-if-block>
+			  </j-if>
+		    </j-for>
+		  </j-for>
+		</j-fx>
+		
+		<j-fx name="drawBall" param data-fx>
+		  <j-value data="ctx" data-value /><j-inhblk data="beginPath" data-cparam data-inhblk /><j-blkclose/>
+		  <j-value data="ctx" data-value /><j-inhblk data="arc" data-inhblk /><j-oparamblk><j-value data="x, y, ballRadius, 0" 
+		    data-value /><j-and/> <j-math type="PI" data-multiply="2" data-math></j-math></j-oparamblk><j-blkclose/>
+		  <j-value data="ctx" data-value /><j-inhblk data="fillStyle" data-eq="'#0095DD'" data-inhblk /><j-blkclose/>
+		  <j-value data="ctx" data-value /><j-inhblk data="fill" data-cparam data-inhblk /><j-blkclose/>
+		  <j-value data="ctx" data-value /><j-inhblk data="closePath" data-cparam data-inhblk /><j-blkclose/>
+		</j-fx>
+		
+		<j-fx name="drawPaddle" param data-fx>
+		  <j-value data="ctx" data-value /><j-inhblk data="beginPath" data-cparam data-inhblk /><j-blkclose/>
+		  <j-value data="ctx" data-value /><j-inhblk data="rect" data-inhblk /><j-oparamblk><j-value data="paddleX" 
+		    data-value /><j-and/> <j-value data="canvas" data-inherit="height" data-value /><j-value-minus/><j-value data="paddleHeight" 
+			data-value /><j-and/> <j-value data="paddleWidth" data-value /><j-and/> <j-value data="paddleHeight" 
+			data-value /></j-oparamblk><j-blkclose/>
+		  <j-value data="ctx" data-value /><j-inhblk data="fillStyle" data-eq="'#0095DD'" data-inhblk /><j-blkclose/>
+		  <j-value data="ctx" data-value /><j-inhblk data="fill" data-cparam data-inhblk /><j-blkclose/>
+		  <j-value data="ctx" data-value /><j-inhblk data="closePath" data-cparam data-inhblk /><j-blkclose/>
+		</j-fx>
+		
+		<j-fx name="drawBricks" param data-fx>
+		  <j-for start="var c = 0" scope="c < brickColumnCount" action="c++" data-for>
+			<j-for start="var r = 0" scope="r < brickRowCount" action="r++" data-for>
+			  <j-if-block><j-value data="bricks" data-aks="c" data-akc data-value /><j-darrblk 
+			    data="r" data-darrblk /><j-inhblk data="status" data-inhblk /><j-eqd/><j-value data="1" data-value /><j-if-state/>
+			     <j-var data="brickX" data-eq data-var><j-oparamblk><j-value data="r" data-multiply data-value/><j-paramblk data="brickWidth" 
+				  data-add="brickPadding" data-paramblk /></j-oparamblk><j-value-add/><j-value data="brickOffsetLeft" data-value /></j-var>
+				 <j-var data="brickY" data-eq data-var><j-oparamblk><j-value data="c" data-multiply data-value/><j-paramblk data="brickHeight" 
+				  data-add="brickPadding" data-paramblk /></j-oparamblk><j-value-add/><j-value data="brickOffsetTop" data-value /></j-var>
+				<j-set data="bricks" data-aks="c" data-akc data-set><j-darrblk data="r" data-darrblk /><j-inhblk data="x"
+				  data-inhblk /><j-eq/><j-value data="brickX" data-value /></j-set>
+				<j-set data="bricks" data-aks="c" data-akc data-set><j-darrblk data="r" data-darrblk /><j-inhblk data="y"
+				  data-inhblk /><j-eq/><j-value data="brickY" data-value /></j-set>
+				 <j-value data="ctx" data-value /><j-inhblk data="beginPath" data-cparam data-inhblk /><j-blkclose/>
+				 <j-value data="ctx" data-value /><j-inhblk data="rect" data-inhblk /><j-paramblk 
+				   data="brickX, brickY, brickWidth, brickHeight" data-paramblk><j-blkclose/>
+				 <j-value data="ctx" data-value /><j-inhblk data="fillStyle" data-eq="'#0095DD'" data-inhblk /><j-blkclose/>
+				 <j-value data="ctx" data-value /><j-inhblk data="fill" data-cparam data-inhblk /><j-blkclose/>
+				 <j-value data="ctx" data-value /><j-inhblk data="closePath" data-cparam data-inhblk /><j-blkclose/>
+			  </j-if-block>
+			</j-for>
+	      </j-for>
+		</j-fx>
+		
+		<j-fx name="drawScore" param data-fx>
+		  <j-value data="ctx" data-value /><j-inhblk data="font" data-eq="'16px Arial'" data-inhblk /><j-blkclose/>
+		  <j-value data="ctx" data-value /><j-inhblk data="fillStyle" data-eq="'#0095DD'" data-inhblk /><j-blkclose/>
+		  <j-value data="ctx" data-value /><j-inhblk data="fillText" data-inhblk /><j-oparamblk><j-value data="'Score: '" data-add="score" data-value /><j-and/> <j-value data="8, 20" data-value /></j-oparamblk><j-blkclose/>
+		</j-fx>
+		
+		<j-fx name="drawLives" param data-fx>
+		  <j-value data="ctx" data-value /><j-inhblk data="font" data-eq="'16px Arial'" data-inhblk /><j-blkclose/>
+		  <j-value data="ctx" data-value /><j-inhblk data="fillStyle" data-eq="'#0095DD'" data-inhblk /><j-blkclose/>
+		  <j-value data="ctx" data-value /><j-inhblk data="fillText" data-inhblk /><j-oparamblk><j-value data="'Lives: '" data-add="lives" data-value /><j-and/> <j-value data="canvas" data-inherit="width" data-minus="65" data-value /><j-and/> <j-value data="20" data-value /></j-oparamblk><j-blkclose/>
+		</j-fx>
+		
+		<j-fx name="stopRemCanvasAx" param data-fx>
+	      <j-value data="canvas" data-value /><j-inhblk data="remove" data-cparam data-inhblk /><j-blkclose/>
+		  <j-value data="canvas" data-value /><j-inhblk data="clearRect" data-inhblk /><j-oparamblk><j-value 
+		   data="0, 0" data-value /><j-and/><j-value data="canvas" data-inherit="width" data-value /><j-and/><j-value 
+		   data="canvas" data-inherit="height" data-value /></j-oparamblk><j-blkclose/>
+		</j-fx>
+		
+		<j-fx name="draw" param data-fx>
+		  <j-value data="ctx" data-value /><j-inhblk data="clearRect" data-inhblk /><j-oparamblk><j-value 
+		   data="0, 0" data-value /><j-and/><j-value data="canvas" data-inherit="width" data-value /><j-and/><j-value 
+		   data="canvas" data-inherit="height" data-value /></j-oparamblk><j-blkclose/>
+		   <j-fx-call name="drawBricks" param data-fx-call></j-fx-call>
+		   <j-fx-call name="drawBall" param data-fx-call></j-fx-call>
+		   <j-fx-call name="drawPaddle" param data-fx-call></j-fx-call>
+		   <j-fx-call name="drawScore" param data-fx-call></j-fx-call>
+		   <j-fx-call name="drawLives" param data-fx-call></j-fx-call>
+		   <j-fx-call name="collisionDetection" param data-fx-call></j-fx-call>
+		   
+		   <j-if-block><j-value data="x" data-add="dx" data-gt="canvas" data-inherit="width" data-minus="ballRadius" 
+		     data-value /><j-lgo/><j-value data="x" data-add="dx" data-lt="ballRadius" data-value /><j-if-state/>
+			 <j-set data="dx" data-eq="-dx" data-set></j-set>
+		   </j-if-block>
+		   <j-if data="y" data-add="dy" data-lt="ballRadius" data-if>
+		     <j-set data="dy" data-eq="-dy" data-set></j-set>
+		   </j-if>
+		   <j-else-if data="y" data-add="dy" data-gt="canvas" data-inherit="height" data-minus="ballRadius" data-else-if>
+		     <j-if-block><j-value data="x" data-gt="paddleX" data-lga="x" data-value /><j-lt/><j-value data="paddleX" data-add="paddleWidth" data-value /><j-if-state/>
+			   <j-set data="dy" data-eq="-dy" data-set></j-set>
+			 </j-if-block>
+			 <j-else>
+			   <j-set data="lives" data-dec data-set></j-set>
+			     <j-if data data-not="lives" data-if>
+			       <j-set data="lossCondition" data-eq="true" data-set></j-set>
+				   <j-docget data-id="'gameoverVx'" data-prop="style.display" data-eq="'flex'" data-docget-apply></j-docget>
+				   <j-fx-call name="stopRemCanvasAx" param data-fx-call></j-fx-call>
+			     </j-if>
+				 <j-else>
+				   <j-set data="x" data-eq="canvas" data-inherit="width" data-divide="2" data-eq data-set></j-set>
+				   <j-set data="y" data-eq="canvas" data-inherit="height" data-minus="30" data-eq data-set></j-set>
+				   <j-set data="dx" data-eq="3" data-set></j-set>
+				   <j-set data="dy" data-eq="-3" data-set></j-set>
+				   <j-set data="paddleX" data-eq data-set><j-paramblk data="canvas" data-inherit="width" data-minus="paddleWidth" data-paramblk /><j-value-divide/><j-value data="2" data-value /></j-set>
+				 </j-else>
+			 
+			 </j-else>
+			 
+		   </j-else-if>
+		   
+		   <j-if data="rightPressed" data-lga="paddleX" data-lt="canvas" 
+		     data-inherit="width" data-minus="paddleWidth" data-if>
+			 <j-set data="paddleX" data-add-eq="7" data-set></j-set>
+		   </j-if>
+		   <j-else-if data="leftPressed" data-lga="paddleX" data-gt="0" data-else-if>
+		     <j-set data="paddleX" data-minus-eq="7" data-set></j-set>
+		   </j-else-if>
+		   
+		   <j-set data="x" data-add-eq="dx" data-set></j-set>
+		   <j-set data="y" data-add-eq="dy" data-set></j-set>
+		   <j-fx-call name="requestAnimationFrame" param="draw" data-fx-call></j-fx-call>
+		   
+		</j-fx>
+		
+		<!-- START THE GAME -->
+		<j-fx-call name="draw" param data-fx-call></j-fx-call>
+		
+
+  </jh-script>
+
+
+</body> 
+
+</html>

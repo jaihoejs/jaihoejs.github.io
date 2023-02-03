@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Jaihoe Tutorial</title>
+	<script type="application/javascript" src="../../../assets/js/jaihoe.js"></script>
+	<style type="text/css">
+		.container {
+		  height: 100%;
+		  display: flex;
+		  justify-content: center;
+		  align-items: center;
+		}
+
+		.material-textfield {
+		  position: relative;
+		}
+
+		label {
+		  position: absolute;
+		  font-size: 1rem;
+		  left: 0;
+		  top: 50%;
+		  transform: translateY(-50%);
+		  background-color: white;
+		  color: gray;
+		  padding: 0 0.3rem;
+		  margin: 0 0.5rem;
+		  transition: 0.1s ease-out;
+		  transform-origin: left top;
+		  pointer-events: none;
+		}
+
+		input {
+		  font-size: 1rem;
+		  outline: none;
+		  border: 1px solid gray;
+		  border-radius: 5px;
+		  padding: 1rem 0.7rem;
+		  color: gray;
+		  transition: 0.1s ease-out;
+		}
+
+		input:focus {
+		  border-color: #6200ee;
+		}
+
+		input:focus+label {
+		  color: #6200ee;
+		  top: 0;
+		  transform: translateY(-50%) scale(0.9) !important;
+		}
+
+		input:not(:placeholder-shown)+label {
+		  top: 0;
+		  transform: translateY(-50%) scale(0.9) !important;
+		}
+
+		input:not(:focus)::placeholder {
+		  opacity: 0;
+		}
+		
+		.martopx {
+			margin-top: 15px;
+		}
+		
+		.martopxy {
+			margin-top: 15px;
+		}
+		
+		
+
+		.pure-material-button-contained {
+			position: relative;
+			display: inline-block;
+			box-sizing: border-box;
+			border: none;
+			border-radius: 4px;
+			padding: 0 16px;
+			min-width: 64px;
+			height: 36px;
+			vertical-align: middle;
+			text-align: center;
+			text-overflow: ellipsis;
+			text-transform: uppercase;
+			color: rgb(var(--pure-material-onprimary-rgb, 255, 255, 255));
+			background-color: #6200EE;
+			box-shadow: 0 3px 1px -2px rgba(0, 0, 0, 0.2), 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 1px 5px 0 rgba(0, 0, 0, 0.12);
+			font-family: var(--pure-material-font, "Roboto", "Segoe UI", BlinkMacSystemFont, system-ui, -apple-system);
+			font-size: 14px;
+			font-weight: 500;
+			line-height: 36px;
+			overflow: hidden;
+			outline: none;
+			cursor: pointer;
+			transition: box-shadow 0.2s;
+		}
+
+		.pure-material-button-contained::-moz-focus-inner {
+			border: none;
+		}
+
+		/* Overlay */
+		.pure-material-button-contained::before {
+			content: "";
+			position: absolute;
+			top: 0;
+			bottom: 0;
+			left: 0;
+			right: 0;
+			background-color: rgb(var(--pure-material-onprimary-rgb, 255, 255, 255));
+			opacity: 0;
+			transition: opacity 0.2s;
+		}
+
+		/* Ripple */
+		.pure-material-button-contained::after {
+			content: "";
+			position: absolute;
+			left: 50%;
+			top: 50%;
+			border-radius: 50%;
+			padding: 50%;
+			width: 32px; /* Safari */
+			height: 32px; /* Safari */
+			background-color: rgb(var(--pure-material-onprimary-rgb, 255, 255, 255));
+			opacity: 0;
+			transform: translate(-50%, -50%) scale(1);
+			transition: opacity 1s, transform 0.5s;
+		}
+
+		/* Hover, Focus */
+		.pure-material-button-contained:hover,
+		.pure-material-button-contained:focus {
+			box-shadow: 0 2px 4px -1px rgba(0, 0, 0, 0.2), 0 4px 5px 0 rgba(0, 0, 0, 0.14), 0 1px 10px 0 rgba(0, 0, 0, 0.12);
+		}
+
+		.pure-material-button-contained:hover::before {
+			opacity: 0.08;
+		}
+
+		.pure-material-button-contained:focus::before {
+			opacity: 0.24;
+		}
+
+		.pure-material-button-contained:hover:focus::before {
+			opacity: 0.3;
+		}
+
+		/* Active */
+		.pure-material-button-contained:active {
+			box-shadow: 0 5px 5px -3px rgba(0, 0, 0, 0.2), 0 8px 10px 1px rgba(0, 0, 0, 0.14), 0 3px 14px 2px rgba(0, 0, 0, 0.12);
+		}
+
+		.pure-material-button-contained:active::after {
+			opacity: 0.32;
+			transform: translate(-50%, -50%) scale(0);
+			transition: transform 0s;
+		}
+
+		/* Disabled */
+		.pure-material-button-contained:disabled {
+			color: rgba(var(--pure-material-onsurface-rgb, 0, 0, 0), 0.38);
+			background-color: rgba(var(--pure-material-onsurface-rgb, 0, 0, 0), 0.12);
+			box-shadow: none;
+			cursor: initial;
+		}
+
+		.pure-material-button-contained:disabled::before {
+			opacity: 0;
+		}
+
+		.pure-material-button-contained:disabled::after {
+			opacity: 0;
+		}
+		
+		#loginButtonMx{
+			transition: 0.4 ease-in-out;
+		}
+		.errorHolder{
+			width:200px;
+			margin:5px 0 0 0;
+			color:red;
+		}
+		
+		.alert-container{
+			display: flex;
+			align-items: center;
+			justify-content: center;
+		}
+		
+		.success-alert{
+			text-align: center;
+			color: #3c763d;
+			background-color: #dff0d8; 
+			border-color: #d6e9c6;
+			padding: 15px;
+			margin-bottom: 20px; 
+			border: 1px solid transparent;
+			border-radius: 4px;
+			margin-top: 15px;
+		}
+
+
+	</style>
+</head>
+
+<body>
+  
+  <div align="center">
+		<h1 id="samplex">Login</h1>
+		<p>(Please enter your credentials)</p>
+	</div>
+	
+	<jh-dep>
+		<!-- IMPORT DEPENDENCY-->
+		<j-imp name="jaihoe_fun" src="../../../assets/js/libraries"></j-imp>
+		
+	</jh-dep>
+	
+	
+	<form autocomplete="off"> 
+		<div class="container">
+		  <div class="material-textfield">
+			<input id="usernameHolder" autocomplete="none" placeholder="Username" type="text" />
+			<label>Username</label>
+		  </div>
+		</div>
+		 <div class="container">
+		 <p id="userNameErrHold" style="display:none;" class="errorHolder">Error</p>
+		</div>
+		 
+		<div class="container martopx">
+		  <div class="material-textfield disblock">
+			<input id="passwordHolder" autocomplete="none" placeholder="Password" type="password" />
+			<label>Password</label>
+		  </div>
+		</div>
+		<div class="container">
+		 <p id="passwordErrHold" style="display:none;" class="errorHolder">Error</p>
+		</div>
+
+		<div class="container martopx">
+		  <button type="button" id="loginButtonMx" class="pure-material-button-contained">Log in</button>
+		</div>
+		
+		<div id="successAlertSx" style="display:none;">
+		  <div class="alert-container">
+			<div class="success-alert">
+				<strong>Successfully Logged in!</strong><br/><span>Please wait for the page to refresh.</span>
+			</div>
+		  </div>
+		</div>
+	</form>
+	
+
+
+    <jh-script>
+
+	  <!-- Making an Annoying Button -->
+		   
+		<!-- Annoying Function -->
+		<j-var data="resetAx = false" data-var></j-var>
+		<j-var data="allowLoginAx = true" data-var></j-var>
+		
+		
+		<j-fx name="applyAnnoyingBTN" param data-fx>
+			<j-fun>
+				<j-attr name="for" value="fun behavior" data-attr></j-attr>
+				<j-attr name="target" value="#loginButtonMx" data-attr></j-attr>
+
+				<j-attr name="method" value="that repel" data-attr></j-attr>
+				<j-attr name="speed" value="300" data-attr></j-attr>
+				<j-attr name="offset" value="70" data-attr></j-attr>
+	 
+			</j-fun>
+		</j-fx>
+
+		<!-- Check AutoComplete -->
+		<j-fx-call name="preEmptyUserPass" param data-fx-call></j-fx-call>
+        <j-fx name="preEmptyUserPass" param data-fx>
+		
+		   <j-docget data-qsel="'#usernameHolder'" data-prop="focus" data-docget-apply="action"></j-docget>
+			<j-set-time>
+			  <j-fx param data-fx>
+			    <j-docget data-qsel="'#usernameHolder'" data-prop="value" data-eq="''" data-docget-apply></j-docget>
+		        <j-docget data-qsel="'#passwordHolder'" data-prop="value" data-eq="''" data-docget-apply></j-docget>
+			  </j-fx>
+			  <j-timeout time="500"></j-timeout>
+		    </j-set-time>
+			<j-fx-call name="applyAnnoyingBTN" param data-fx-call></j-fx-call>
+			<j-set data="resetAx = false" data-set></j-set>
+			<j-set data="allowLoginAx = false" data-set></j-set>
+		</j-fx>
+
+		<!-- Check Inputs -->
+		<j-add-evt element="#usernameHolder" data-elem-evtype="keyup" data-add-evt>
+			<j-fx name="inputChkFx" param data-fx>
+				<j-fx-call name="chkUsernameGx" param data-fx-call></j-fx-call>
+				<j-fx-call name="canButtonStopGx" param data-fx-call></j-fx-call>
+			</j-fx>
+		</j-add-evt>
+		
+		
+		<j-var data="elemPasHld" data-eq data-var>
+			<j-docget data-id="'passwordHolder'" data-docget></j-docget>
+		</j-var>
+		
+		<j-add-evt var="elemPasHld" data-evtype="keyup" data-add-evt>
+			<j-fx name="inputChkFx" param data-fx>
+				<j-fx-call name="chkPasswordGx" param data-fx-call></j-fx-call>
+				<j-fx-call name="canButtonStopGx" param data-fx-call></j-fx-call>
+			</j-fx>
+		</j-add-evt>
+
+		<!-- Function Checkers -->
+		
+		<j-fx name="chkUsernameGx" param data-fx>
+			<!--  <j-console output="'Check Username'" data-console></j-console> -->
+			
+			<!-- Get Value -->
+			<j-var data="usernameAx" data-eq data-var>
+				<j-docget data-id="'usernameHolder'" data-prop="value" data-docget-extend></j-docget>
+			</j-var>
+
+			<!-- Current Value -->
+			<!-- <j-console output="`Username: ${usernameAx} (Length: ${usernameAx.length})`" data-console></j-console> -->
+
+			<!-- Check Username -->
+			<j-if data="usernameAx.length == 0" data-if>
+			     <j-docget data-id="'userNameErrHold'" data-prop="style.display" data-eq="'block'" data-docget-apply></j-docget>
+				 <j-write element="'#userNameErrHold'" method="write" output="'Enter an username!'" data-write></j-write>
+			</j-if>
+			<j-else-if data="usernameAx.length < 3" data-else-if>
+				<j-docget data-id="'userNameErrHold'" data-prop="style.display" data-eq="'block'" data-docget-apply></j-docget>
+				<j-write element="'#userNameErrHold'" method="write" output="'Enter a lengthy username!'" data-write></j-write>
+		    </j-else-if>
+			<j-else>
+				 <j-docget data-id="'userNameErrHold'" data-prop="style.display" data-eq="'none'" data-docget-apply></j-docget>
+			 </j-else>
+
+		</j-fx>
+		
+		<j-fx name="chkPasswordGx" param data-fx>
+			<!-- <j-console output="'Check Password'" data-console></j-console> -->
+			
+			<!-- Get Value -->
+			<j-var data="passwordAx" data-eq data-var>
+				<j-docget data-id="'passwordHolder'" data-prop="value" data-docget-extend></j-docget>
+			</j-var>
+			
+			<!-- Current Value -->
+			<!-- <j-console output="`Password: ${passwordAx} (Length: ${passwordAx.length})`" data-console></j-console> -->
+
+			<!-- Check Password -->
+			<j-if data="passwordAx.length == 0" data-if>
+			     <j-docget data-id="'passwordErrHold'" data-prop="style.display" data-eq="'block'" data-docget-apply></j-docget>
+				 <j-write element="'#passwordErrHold'" method="write" output="'Enter an password!'" data-write></j-write>
+			</j-if>
+			<j-else-if data="passwordAx.length < 6" data-else-if>
+				<j-docget data-id="'passwordErrHold'" data-prop="style.display" data-eq="'block'" data-docget-apply></j-docget>
+				<j-write element="'#passwordErrHold'" method="write" output="'Enter a long password!'" data-write></j-write>
+		    </j-else-if>
+			<j-else>
+				 <j-docget data-id="'passwordErrHold'" data-prop="style.display" data-eq="'none'" data-docget-apply></j-docget>
+			 </j-else>
+
+		</j-fx>
+		
+		<!-- Function IF Button can Stop -->
+		<j-fx name="canButtonStopGx" param data-fx>
+			 <!-- <j-console output="'Can Stop?'" data-console></j-console> -->
+			
+			<!-- Get Value -->
+			<j-var data="usernameAx" data-eq data-var>
+				<j-docget data-id="'usernameHolder'" data-prop="value" data-docget-extend></j-docget>
+			</j-var>
+			
+			<j-var data="passwordAx" data-eq data-var>
+				<j-docget data-id="'passwordHolder'" data-prop="value" data-docget-extend></j-docget>
+			</j-var>
+			
+			
+			
+			
+			<j-if data="(usernameAx.length > 2) && (passwordAx.length > 5)" data-if>
+			    <!-- <j-console output="'Go!'" data-console></j-console> -->
+				
+				<j-fun>
+					<j-attr name="for" value="fun behavior" data-attr></j-attr>
+					<j-attr name="target" value="#loginButtonMx" data-attr></j-attr>
+
+					<j-attr name="method" value="stop repel" data-attr></j-attr>
+					
+				</j-fun>
+
+				<j-set data="allowLoginAx = true" data-set></j-set>
+
+				<j-add-evt element="#loginButtonMx" data-elem-evtype="click" data-add-evt>
+					<j-fx name="successLoginAx" param data-fx>
+						<j-if data="allowLoginAx == true" data-if>
+							<!-- <j-console output="`Go Login!`" data-console></j-console> -->
+							<j-docget data-id="'successAlertSx'" data-prop="style.display" data-eq="'block'" data-docget-apply></j-docget>
+							
+							<j-set-time>
+							   <j-fx name="reloadFunctAx" param data-fx>
+							      <j-reload></j-reload>
+							   </j-fx>
+							   <j-timeout time="1000"></j-timeout>
+							</j-set-time>
+
+						</j-if>
+					</j-fx>
+				</j-add-evt>
+				
+				
+				
+				<j-set data="resetAx = true" data-set></j-set>
+				
+			</j-if>
+			<j-else>
+				
+				<j-if data="resetAx == true" data-if>
+					
+					<j-fx-call name="applyAnnoyingBTN" param data-fx-call></j-fx-call>
+					<j-set data="resetAx = false" data-set></j-set>
+				</j-if>
+				<j-set data="allowLoginAx = false" data-set></j-set>
+
+			 </j-else>
+			
+			
+			
+		</j-fx>
+		
+		
+		
+		
+		
+
+
+    </jh-script>
+  
+
+
+</body> 
+
+</html>

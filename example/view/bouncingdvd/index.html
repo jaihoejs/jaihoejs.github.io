@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Jaihoe Tutorial</title>
+	<script type="application/javascript" src="../../../assets/js/jaihoe.js"></script>
+	<style type="text/css">
+		body{
+			background-color: black;
+		}
+		.sbouncer{
+			position:absolute;
+			left:0;
+			top:0;
+		}
+		.bouncestat {
+		  -webkit-touch-callout: none;
+		  -webkit-user-select: none;
+		  -khtml-user-select: none; 
+		  -moz-user-select: none; 
+		  -ms-user-select: none; 
+		  user-select: none; 	
+					  
+		}
+	</style>
+</head>
+
+<body>
+
+  <div class="sbouncer bouncestat" draggable="false" ondragstart="return false;" id="superbouncer">
+	<img id="dvdLogo" src="dvd/0.png" alt="DVD">
+  </div>
+
+  <jh-script>
+	
+	<!-- 
+	     DVD BOUNCING IMAGE
+		 (Written in JaihoeScript)
+		 By Jerwin D. Dela Cruz
+	 -->
+
+	<!-- 60 FPS -->
+	<j-var data="textGapAx" data-eq="1" data-var></j-var>
+	<j-var data="textSpeedAx" data-eq="15" data-var></j-var>
+	
+	<!-- DEF VARIABLES -->
+	<j-var data="contentWidthAx" data-var></j-var>
+	<j-var data="contentHeightAx" data-var></j-var>
+	<j-var data="xMax" data-var></j-var>
+	<j-var data="yMax" data-var></j-var>
+	<j-var data="xPos" data-eq="0" data-var></j-var>
+	<j-var data="yPos" data-eq="0" data-var></j-var>
+	<j-var data="xDir" data-eq="'right'" data-var></j-var>
+	<j-var data="yDir" data-eq="'down'" data-var></j-var>
+	<j-var data="animatetext" data-var></j-var>
+	
+	<j-var data="oldColorsAx" data-litarr data-var></j-var>
+
+	<!-- START DVD BOUNCING! -->
+	<j-fx-call name="initializePreDVD" param data-fx-call></j-fx-call>
+	
+	<!-- FUNCTIONS -->
+	<j-fx name="initializeTextAx" param data-fx>
+	  <j-fx-call name="initializeWinBorder" param data-fx-call></j-fx-call>
+	  <j-var data="superbouncer" data-eq data-var>
+		<j-docget data-id="'superbouncer'" data-docget></j-docget>
+	  </j-var>
+	  <j-set data="contentWidthAx" data-eq="superbouncer" data-inherit="offsetWidth" data-set></j-set>
+	  <j-set data="contentHeightAx" data-eq="superbouncer" data-inherit="offsetHeight" data-set></j-set>
+	  <j-set-time><j-fx-evt name="moveTextAx" data-fx-evt></j-fx-evt><j-timeout time="50"></j-timeout></j-set-time>
+
+	</j-fx>
+	
+	<j-fx name="initializeWinBorder" param data-fx>
+	  <j-if data="typeof window" data-inherit="innerWidth" data-neqd="'undefined'" data-if>
+		<j-set data="xMax" data-eq="window" data-inherit="innerWidth" data-set></j-set>
+		<j-set data="yMax" data-eq="window" data-inherit="innerHeight" data-set></j-set>
+	  </j-if>
+	  <j-else-if-block><j-value data="typeof document" data-value /><j-inhblk data="documentElement" data-neqd="'undefined'" data-inhblk /><j-lga/>
+		<j-value data="typeof document" data-value /><j-inhblk data="documentElement" data-inherit="clientWidth" data-neqd="'undefined'" data-inhblk /><j-lga/>
+		<j-value data="document" data-inherit="documentElement.clientWidth" data-neqd="0" data-value /><j-else-if-state/>
+		
+		<j-set data="xMax" data-eq="document" data-inherit="documentElement" data-set><j-inhblk data="clientWidth" data-inhblk /></j-set>
+		<j-set data="yMax" data-eq="document" data-inherit="documentElement" data-set><j-inhblk data="clientHeight" data-inhblk /></j-set>
+	  </j-else-if-block>
+	  <j-else>
+	    <j-set data="xMax" data-eq="document" data-inherit="getElementsByTagName" param="'body'" data-parame data-aks="0" data-akc data-set><j-inhblk data="clientWidth" data-inhblk /></j-set>
+		<j-set data="yMax" data-eq="document" data-inherit="getElementsByTagName" param="'body'" data-parame data-aks="0" data-akc data-set><j-inhblk data="clientHeight" data-inhblk /></j-set>
+		
+	  </j-else>
+	  
+	</j-fx>
+	
+	<j-fx name="initializePreDVD" param data-fx>
+	  <j-fx-call name="updateColorDVD" param data-fx-call></j-fx-call>	
+	  <j-set-time><j-fx-evt name="initializeTextAx" data-fx-evt></j-fx-evt><j-timeout time="50"></j-timeout></j-set-time>
+	</j-fx>
+	
+	<j-fx name="moveTextAx" param data-fx>
+	  <j-var data="superbouncer" data-eq data-var>
+		<j-docget data-id="'superbouncer'" data-docget></j-docget>
+	  </j-var>
+	  <j-fx-call name="calculatePosition" param data-fx-call></j-fx-call>	
+	  <j-set data="superbouncer" data-inherit="style.left" data-eq data-set>
+	    <j-value data="xPos + document.body.scrollLeft + 'px'" data-value />
+	  </j-set>
+	  <j-set data="superbouncer" data-inherit="style.top" data-eq data-set>
+	    <j-value data="yPos + document.body.scrollTop + 'px'" data-value />
+	  </j-set>
+	  
+	  <j-set-block data="animatetext" data-eq data-set-block><j-set-time><j-fx-evt name="moveTextAx" data-fx-evt></j-fx-evt><j-timeout time="textSpeedAx"></j-timeout></j-set-time>
+	  </j-set-block>
+	  
+	</j-fx>
+	
+	<j-add-evt var="window" data-evtype="resize" data-add-evt><j-fx-evt name="initializeWinBorder" data-fx-evt></j-fx-evt></j-add-evt>
+
+	<j-fx name="calculatePosition" param data-fx>
+	  <j-if data="xDir" data-eqd="'right'" data-if>
+		<j-if data="xPos" data-gt="(xMax - contentWidthAx - textGapAx)" data-if>
+		  <j-set data="xDir" data-eq="'left'" data-set></j-set>
+		  <j-fx-call name="updateColorDVD" param data-fx-call></j-fx-call>
+	    </j-if>
+	  
+	  </j-if>
+	  <j-else-if data="xDir" data-eqd="'left'" data-if>
+		<j-if data="xPos" data-lt="(0 + textGapAx)" data-if>
+		  <j-set data="xDir" data-eq="'right'" data-set></j-set>
+		  <j-fx-call name="updateColorDVD" param data-fx-call></j-fx-call>
+	    </j-if>
+	  
+	  </j-else-if>
+	  
+	  <j-if data="yDir" data-eqd="'down'" data-if>
+		<j-if data="yPos" data-gt="(yMax - contentHeightAx - textGapAx)" data-if>
+		  <j-set data="yDir" data-eq="'up'" data-set></j-set>
+		  <j-fx-call name="updateColorDVD" param data-fx-call></j-fx-call>
+	    </j-if>
+	  
+	  </j-if>
+	  <j-else-if data="yDir" data-eqd="'up'" data-if>
+		<j-if data="yPos" data-lt="(0 + textGapAx)" data-if>
+		  <j-set data="yDir" data-eq="'down'" data-set></j-set>
+		  <j-fx-call name="updateColorDVD" param data-fx-call></j-fx-call>
+	    </j-if>
+	  
+	  </j-else-if>
+	  
+	  <j-if data="xDir" data-eqd="'right'" data-if>
+	    <j-set data="xPos" data-eq="xPos" data-add="textGapAx" data-set></j-set>
+	  </j-if>
+	  <j-else-if data="xDir" data-eqd="'left'" data-if>
+	    <j-set data="xPos" data-eq="xPos" data-minus="textGapAx" data-set></j-set>
+	  </j-else-if>
+	  <j-else>
+	    <j-set data="xPos" data-eq="xPos" data-set></j-set>
+	  </j-else>
+	  
+	  <j-if data="yDir" data-eqd="'down'" data-if>
+	    <j-set data="yPos" data-eq="yPos" data-add="textGapAx" data-set></j-set>
+	  </j-if>
+	  <j-else-if data="yDir" data-eqd="'up'" data-if>
+	    <j-set data="yPos" data-eq="yPos" data-minus="textGapAx" data-set></j-set>
+	  </j-else-if>
+	  <j-else>
+	    <j-set data="yPos" data-eq="yPos" data-set></j-set>
+	  </j-else>
+	  
+	</j-fx>
+	
+	<j-fx name="updateColorDVD" param data-fx>
+
+	  <j-let data="dvdLogoAx" data-eq data-let>
+		<j-docget data-id="'dvdLogo'" data-docget></j-docget>
+	  </j-let>
+	  
+	  <j-let data="randomColorAx" data-eq data-let><j-random param="1,8" data-random></j-random></j-let>
+		
+	  <j-while scope="oldColorsAx" data-inherit="includes" param="randomColorAx" data-parame data-while>
+	    <j-set data="randomColorAx" data-eq data-set><j-random param="1,8" data-random></j-random></j-set>
+	  </j-while>
+		
+		<j-array-set data="oldColorsAx" method="array" type="push" param="randomColorAx"
+		  data-array-method></j-array-set>
+
+		<!--
+		<j-console param="'change: '+randomColorAx" data-console></j-console>
+		<j-console param="oldColorsAx" data-console></j-console>
+		  -->
+
+		<j-let data="dvdLogoSRC" data-eq="'dvd/'+randomColorAx+'.png'" data-let></j-let>
+		<j-value data="dvdLogoAx" data-value /><j-inhblk data="setAttribute" param="'src',dvdLogoSRC"
+		  data-parame data-inhblk /><j-blkclose/>
+
+		
+		<j-if data="oldColorsAx" data-inherit="length" data-eqd="8" data-if>
+		  <j-array-set data="oldColorsAx" method="array" type="splice"
+		    param="0,oldColorsAx" data-inherit="length" data-array-method></j-array-set>
+
+		</j-if>
+
+		
+	  
+	</j-fx>
+	
+  </jh-script>
+
+</body> 
+
+</html>
