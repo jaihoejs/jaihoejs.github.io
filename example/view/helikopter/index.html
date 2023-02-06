@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Jaihoe Tutorial</title>
+	<script type="application/javascript" src="./jaihoe.js"></script>
+	<link rel="stylesheet" href="styles.css">
+	
+</head>
+
+<body>
+
+  <div class="welcomeSplash consolefont">
+	<div class="welcomeSplashBox">
+	  <h1 class="preHWSMar">Helikopter</h1>
+	  <p class="preSOWSMar">by Jerwin D. Dela Cruz</p>
+	  <button class="pure-mbc" id="startHelikopter">Start Flying</button>
+	</div>
+  </div>
+  
+  <div style="display: none;" class="sbouncer bouncestat consolefont closecopter" draggable="false" ondragstart="return false;" id="superbouncer">
+	 <div class="paintHelikopter">
+	   <div class="copterBlade">
+	    <p class="mRotorBlade preWSpace preNEMar">       (&lt;=:JERWIN=:LOL:</p>
+	   </div>
+	   <div class="copterLeftBody">
+		<p class="preWSpace preNEMar">   <span class="tRotorBladeTop preWSpace">L</span>           __ __|__</p>
+		<p class="preWSpace preNEMar"> [LOL]________(::(  |@ \__</p>
+		<p class="preWSpace preNEMar">   <span class="tRotorBladeBot preWSpace">L</span>  \\------\___________)</p>
+		<p class="preWSpace preNEMar">               __|___|___,</p>
+	   </div>
+	   <div style="display:none;" class="copterRightBody">
+		<p class="preWSpace preNEMar">                  __|__ __            <span class="tRotorBladeTop preWSpace">L</span></p>
+		<p class="preWSpace preNEMar">               __/ @|  )::)_________[LOL] </p>
+		<p class="preWSpace preNEMar">              (___________/-------//  <span class="tRotorBladeBot preWSpace">L</span></p>
+		<p class="preWSpace preNEMar">               ___|___|__,</p>
+	   </div>
+	 </div>
+  </div>
+  
+  <div class="bgmHolder" style="display: none;">
+	<audio id="helikopterBGM" loop alt="background music">
+	  <source src="helikopter.ogg" type="audio/ogg">
+	  <source src="helikopter.mp3" type="audio/mpeg">
+	</audio>
+  </div>
+
+  <jh-script>
+    <!--
+	     HELIKOPTER
+		 (Written in JaihoeScript)
+		 By Jerwin D. Dela Cruz
+	 -->
+
+	 <!-- 60 FPS -->
+	 <j-var data="textGapAx" data-eq="1" data-var></j-var>
+	 <j-var data="textSpeedAx" data-eq="15" data-var></j-var>
+	 <j-var data="bladeSpeedAx" data-eq="60" data-var></j-var>  
+	 
+	 <!-- DEF VARIABLES -->
+	 <j-var data="contentWidthAx" data-var></j-var>
+	 <j-var data="contentHeightAx" data-var></j-var>
+	 <j-var data="xMax" data-var></j-var>
+	 <j-var data="yMax" data-var></j-var>
+	 <j-var data="xPos" data-eq="0" data-var></j-var>
+	 <j-var data="yPos" data-eq="0" data-var></j-var>  
+	 <j-var data="xDir" data-eq="'right'" data-var></j-var>  
+	 <j-var data="yDir" data-eq="'down'" data-var></j-var>  
+	 <j-var data="prtBlade" data-eq="false" data-var></j-var>  
+	 <j-var data="animatetext" data-var></j-var>
+	 <j-var data="animateblade" data-var></j-var>
+	 
+	 <j-var data="oldColorsAx" data-litarr data-var></j-var>
+	 <j-var data="randomColorList" data-eq data-var><j-array>
+	   <j-arel data-dq="#FFFFFF" data-arel-dq></j-arel>
+	   <j-arel data-dq="#FFFF00" data-arel-dq></j-arel>
+	   <j-arel data-dq="#FF00FF" data-arel-dq></j-arel>
+	   <j-arel data-dq="#FF2525" data-arel-dq></j-arel>
+	   <j-arel data-dq="#00FFFF" data-arel-dq></j-arel>
+	   <j-arel data-dq="#00FF00" data-arel-dq></j-arel>
+	   <j-arel data-dq="#3B3BFF" data-arel-dq></j-arel>
+	   <j-arel data-dq="#C0C0C0" data-arel-dq></j-arel>
+	   <j-arel data-dq="#BCB800" data-arel-dq></j-arel>
+	   <j-arel data-dq="#8F00FF" data-arel-dq-close></j-arel>
+	 </j-array></j-var>
+	 
+	 <!-- ELEMENT VARIABLES -->
+	 <j-var data="tbladeTop" data-eq data-var>
+	   <j-docget data-qsela="'.tRotorBladeTop'" data-docget></j-docget>
+	 </j-var>
+	 <j-var data="tbladeBot" data-eq data-var>
+	   <j-docget data-qsela="'.tRotorBladeBot'" data-docget></j-docget>
+	 </j-var>
+	 
+	 <!-- START HELIKOPTER BOUNCING! -->
+	 
+	 <j-add-evt element="#startHelikopter" data-elem-evtype="click" data-add-evt>
+	   <j-fx param data-fx>
+		 <j-set-time> <j-fx param data-fx>
+			<j-docget data-id="'superbouncer'" data-prop="style.display" 
+		      data-eq="'block'" data-docget-apply></j-docget>
+		    <j-docget data-qsel="'.welcomeSplash'" data-prop="style.display" 
+		      data-eq="'none'" data-docget-apply></j-docget>
+	      
+		    <j-const data="bgmElem" data-eq data-const>
+		      <j-docget data-id="'helikopterBGM'" data-docget></j-docget>
+		    </j-const>
+		  
+		    <j-set data="bgmElem" data-inherit="play" data-cparam data-set></j-set>
+		    <j-fx-call name="initializePreHelikopter" param data-fx-call></j-fx-call>
+		 </j-fx><j-timeout time="350"></j-timeout></j-set-time>
+	   </j-fx>
+	 </j-add-evt>
+	 
+	 <!-- FUNCTIONS -->
+	 <j-fx name="initializeTextAx" param data-fx>
+	   <j-fx-call name="initializeWinBorder" param data-fx-call></j-fx-call>
+	    <j-var data="superbouncer" data-eq data-var>
+	      <j-docget data-id="'superbouncer'" data-docget></j-docget>
+	    </j-var>
+	   
+	   <j-set data="contentWidthAx" data-eq="superbouncer" data-inherit="offsetWidth" data-set></j-set>
+	   <j-set data="contentHeightAx" data-eq="superbouncer" data-inherit="offsetHeight" data-set></j-set>
+	   
+	    <j-set-time><j-fx-evt name="moveTextAx" data-fx-evt></j-fx-evt><j-timeout time="50"></j-timeout></j-set-time>
+	    <j-set-time><j-fx-evt name="moveBladeAx" data-fx-evt></j-fx-evt><j-timeout time="50"></j-timeout></j-set-time>
+	 </j-fx>
+	 
+	 <j-fx name="initializeWinBorder" param data-fx>
+	  <j-if data="typeof window" data-inherit="innerWidth" data-neqd="'undefined'" data-if>
+		<j-set data="xMax" data-eq="window" data-inherit="innerWidth" data-set></j-set>
+		<j-set data="yMax" data-eq="window" data-inherit="innerHeight" data-set></j-set>
+	  </j-if>
+	  <j-else-if-block><j-value data="typeof document" data-value /><j-inhblk data="documentElement" data-neqd="'undefined'" data-inhblk /><j-lga/>
+		<j-value data="typeof document" data-value /><j-inhblk data="documentElement" data-inherit="clientWidth" data-neqd="'undefined'" data-inhblk /><j-lga/>
+		<j-value data="document" data-inherit="documentElement.clientWidth" data-neqd="0" data-value /><j-else-if-state/>
+		
+		<j-set data="xMax" data-eq="document" data-inherit="documentElement" data-set><j-inhblk data="clientWidth" data-inhblk /></j-set>
+		<j-set data="yMax" data-eq="document" data-inherit="documentElement" data-set><j-inhblk data="clientHeight" data-inhblk /></j-set>
+	  </j-else-if-block>
+	  <j-else>
+	    <j-set data="xMax" data-eq="document" data-inherit="getElementsByTagName" param="'body'" data-parame data-aks="0" data-akc data-set><j-inhblk data="clientWidth" data-inhblk /></j-set>
+		<j-set data="yMax" data-eq="document" data-inherit="getElementsByTagName" param="'body'" data-parame data-aks="0" data-akc data-set><j-inhblk data="clientHeight" data-inhblk /></j-set>
+		
+	  </j-else>
+	  
+	</j-fx>
+	
+	<j-fx name="initializePreHelikopter" param data-fx>
+	   <j-fx-call name="updateHelikopterColor" param data-fx-call></j-fx-call>
+	    <j-set-time><j-fx-evt name="initializeTextAx" data-fx-evt></j-fx-evt><j-timeout time="50"></j-timeout></j-set-time>
+	</j-fx>
+	
+	<j-fx name="moveTextAx" param data-fx>
+	  <j-var data="superbouncer" data-eq data-var>
+		<j-docget data-id="'superbouncer'" data-docget></j-docget>
+	  </j-var>
+	  <j-fx-call name="updateHelikopter" param data-fx-call></j-fx-call>	
+	  <j-set data="superbouncer" data-inherit="style.left" data-eq data-set>
+	    <j-value data="xPos + document.body.scrollLeft + 'px'" data-value />
+	  </j-set>
+	  <j-set data="superbouncer" data-inherit="style.top" data-eq data-set>
+	    <j-value data="yPos + document.body.scrollTop + 'px'" data-value />
+	  </j-set>
+	  
+	  <j-set-block data="animatetext" data-eq data-set-block><j-set-time><j-fx-evt name="moveTextAx" data-fx-evt></j-fx-evt><j-timeout time="textSpeedAx"></j-timeout></j-set-time>
+	  </j-set-block>
+	  
+	</j-fx>
+	
+	<j-fx name="moveBladeAx" param data-fx>
+		
+	  <j-fx-call name="updateRotorBlade" param="prtBlade" data-fx-call></j-fx-call>
+	  <j-set-block data="animateblade" data-eq data-set-block><j-set-time><j-fx-evt name="moveBladeAx" data-fx-evt></j-fx-evt><j-timeout time="bladeSpeedAx"></j-timeout></j-set-time>
+	</j-fx>
+	
+	<j-add-evt var="window" data-evtype="resize" data-add-evt><j-fx-evt name="initializeWinBorder" data-fx-evt></j-fx-evt></j-add-evt>
+	
+	<j-fx name="updateHelikopter" param data-fx>
+	  <j-if data="xDir" data-eqd="'right'" data-if>
+		<j-if data="xPos" data-gt="(xMax - contentWidthAx - textGapAx)" data-if>
+		  <j-set data="xDir" data-eq="'left'" data-set></j-set>
+		  <j-fx-call name="updateCopterPos" param="'right'" data-fx-call></j-fx-call>
+		  <j-fx-call name="updateHelikopterColor" param data-fx-call></j-fx-call>
+	    </j-if>
+	  
+	  </j-if>
+	  <j-else-if data="xDir" data-eqd="'left'" data-if>
+		<j-if data="xPos" data-lt="(0 + textGapAx)" data-if>
+		  <j-set data="xDir" data-eq="'right'" data-set></j-set>
+		  <j-fx-call name="updateCopterPos" param="'left'" data-fx-call></j-fx-call>
+		  <j-fx-call name="updateHelikopterColor" param data-fx-call></j-fx-call>
+	    </j-if>
+	  
+	  </j-else-if>
+	  
+	  <j-if data="yDir" data-eqd="'down'" data-if>
+		<j-if data="yPos" data-gt="(yMax - contentHeightAx - textGapAx)" data-if>
+		  <j-set data="yDir" data-eq="'up'" data-set></j-set>
+		  <j-fx-call name="updateHelikopterColor" param data-fx-call></j-fx-call>
+	    </j-if>
+	  
+	  </j-if>
+	  <j-else-if data="yDir" data-eqd="'up'" data-if>
+		<j-if data="yPos" data-lt="(0 + textGapAx)" data-if>
+		  <j-set data="yDir" data-eq="'down'" data-set></j-set>
+		  <j-fx-call name="updateHelikopterColor" param data-fx-call></j-fx-call>
+	    </j-if>
+	  
+	  </j-else-if>
+	  
+	  <j-if data="xDir" data-eqd="'right'" data-if>
+	    <j-set data="xPos" data-eq="xPos" data-add="textGapAx" data-set></j-set>
+	  </j-if>
+	  <j-else-if data="xDir" data-eqd="'left'" data-if>
+	    <j-set data="xPos" data-eq="xPos" data-minus="textGapAx" data-set></j-set>
+	  </j-else-if>
+	  <j-else>
+	    <j-set data="xPos" data-eq="xPos" data-set></j-set>
+	  </j-else>
+	  
+	  <j-if data="yDir" data-eqd="'down'" data-if>
+	    <j-set data="yPos" data-eq="yPos" data-add="textGapAx" data-set></j-set>
+	  </j-if>
+	  <j-else-if data="yDir" data-eqd="'up'" data-if>
+	    <j-set data="yPos" data-eq="yPos" data-minus="textGapAx" data-set></j-set>
+	  </j-else-if>
+	  <j-else>
+	    <j-set data="yPos" data-eq="yPos" data-set></j-set>
+	  </j-else>
+	  
+	</j-fx>
+	
+	<j-fx name="updateCopterPos" param="pos" data-fx>
+	  <j-if data="pos" data-eqt="'right'" data-if>
+	     <j-docget data-qsel="'.copterLeftBody'" data-prop="style.display" data-eq="'none'" data-docget-apply></j-docget>
+		 <j-docget data-qsel="'.copterRightBody'" data-prop="style.display" data-eq="'block'" data-docget-apply></j-docget>
+	  </j-if>
+	  <j-else-if data="pos" data-eqt="'left'" data-if>
+	     <j-docget data-qsel="'.copterLeftBody'" data-prop="style.display" data-eq="'block'" data-docget-apply></j-docget>
+		 <j-docget data-qsel="'.copterRightBody'" data-prop="style.display" data-eq="'none'" data-docget-apply></j-docget>
+	  </j-else-if>
+	</j-fx>
+	
+	<j-fx name="updateRotorBlade" param="rblade" data-fx>
+	  <j-if data="rblade" data-eqd="false" data-if>
+	    <j-docget data-qsel="'.mRotorBlade'" data-prop="innerHTML" 
+		  data-eq="'       (&lt;=:JERWIN=:LOL:'"  data-docget-apply></j-docget>
+		  
+		  <j-set data="tbladeTop" data-aks="0" data-akc 
+		    data-inherit="innerHTML" data-eq="'L'" data-set></j-set>
+		  <j-set data="tbladeBot" data-aks="0" data-akc 
+		    data-inherit="innerHTML" data-eq="' '" data-set></j-set>
+			
+		  <j-set data="tbladeTop" data-aks="1" data-akc 
+		    data-inherit="innerHTML" data-eq="'L'" data-set></j-set>
+		  <j-set data="tbladeBot" data-aks="1" data-akc 
+		    data-inherit="innerHTML" data-eq="' '" data-set></j-set>
+			
+		<j-set data="prtBlade" data-eq="true" data-set></j-set>
+	  </j-if>
+	  <j-else> 
+	    <j-docget data-qsel="'.mRotorBlade'" data-prop="innerHTML" 
+		  data-eq="'                  :LOL:=JERWIN:=>)'"  data-docget-apply></j-docget>
+		  
+		  <j-set data="tbladeTop" data-aks="0" data-akc 
+		    data-inherit="innerHTML" data-eq="' '" data-set></j-set>
+		  <j-set data="tbladeBot" data-aks="0" data-akc 
+		    data-inherit="innerHTML" data-eq="'L'" data-set></j-set>
+			
+		  <j-set data="tbladeTop" data-aks="1" data-akc 
+		    data-inherit="innerHTML" data-eq="' '" data-set></j-set>
+		  <j-set data="tbladeBot" data-aks="1" data-akc 
+		    data-inherit="innerHTML" data-eq="'L'" data-set></j-set>
+		  
+		<j-set data="prtBlade" data-eq="false" data-set></j-set>
+	  </j-else>
+
+	</j-fx>
+	
+	<j-fx name="updateHelikopterColor" param="rblade" data-fx>
+	  <j-let data="randomColorAx" data-eq data-let>
+	    <j-random param="9" data-random></j-random>
+	  </j-let>
+	  
+	  <j-while scope="oldColorsAx" data-inherit="includes" 
+	    param="randomColorAx" data-parame data-while>
+	      <j-set data="randomColorAx" data-eq data-set>
+		    <j-random param="9" data-random></j-random>
+		  </j-set>
+	  </j-while>
+	  
+	  <j-array-set data="oldColorsAx" method="array" type="push" 
+	    param="randomColorAx" data-array-method></j-array-set>
+		
+		<j-docget data-qsel="'.paintHelikopter'" data-prop="style.color" 
+		  data-eq="randomColorList" data-aks="randomColorAx" data-akc 
+		  data-docget-apply></j-docget>
+		
+		  <!--
+			<j-console param="'change: '+randomColorAx" data-console></j-console>
+			<j-console param="oldColorsAx" data-console></j-console>
+		   -->
+		
+        <j-if data="oldColorsAx" data-inherit="length" data-eqd="8" data-if>
+		  <j-array-set data="oldColorsAx" method="array" type="splice"
+		    param="0,oldColorsAx" data-inherit="length" 
+			data-array-method></j-array-set>
+		</j-if>
+		
+	  </j-fx>
+	
+  </jh-script>
+  
+
+
+</body> 
+
+</html>
